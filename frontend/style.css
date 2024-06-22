@@ -50,11 +50,6 @@ h1:hover {
 	animation: GradientAnimation 2s ease infinite;
 }
 
-h1:hover {
-	animation: GradientAnimation 2s ease infinite;
-	animation: GradientAnimation 2s ease infinite;
-}
-
 @keyframes GradientAnimation {
 	0% {
 		background-position: 0% 50%;
