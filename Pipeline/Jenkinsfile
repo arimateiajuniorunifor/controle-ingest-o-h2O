@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:20.10.7'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v $(which docker-compose):/usr/local/bin/docker-compose'
+        }
+    }
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
@@ -9,7 +14,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O'
+                git branch: 'main', url: 'https://github.com/your-repo.git'
             }
         }
 
@@ -40,6 +45,17 @@ pipeline {
                     docker login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW}
                     docker-compose push
                     """
+                }
+            }
+        }
+
+        stage('Run Application') {
+            when {
+                expression { currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                script {
+                    sh 'docker-compose up -d app_backend'
                 }
             }
         }
