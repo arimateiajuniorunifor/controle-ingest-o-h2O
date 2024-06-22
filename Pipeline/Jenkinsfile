@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
-       
+
     }
 
     stages {
@@ -16,7 +16,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'docker-compose up --build -d'
+                    // Executa o build usando docker-compose
+                    dockerComposeBuild()
                 }
             }
         }
@@ -24,7 +25,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh 'docker exec controle-h2o_backend ./run-tests.sh'
+                    // Executa os testes no serviço controle-h2o_backend
+                    dockerComposeRun(service: 'controle-h2o_backend', command: 'sh -c "./run-tests.sh"')
                 }
             }
         }
@@ -35,11 +37,8 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker-compose build'
-                    sh """
-                    docker login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW}
-                    docker-compose push
-                    """
+                    // Faz o build e o push das imagens Docker
+                    dockerComposePush()
                 }
             }
         }
@@ -50,7 +49,8 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker-compose up -d app_backend'
+                    // Inicia a aplicação usando docker-compose
+                    dockerComposeUp(detached: true, service: 'app_backend')
                 }
             }
         }
