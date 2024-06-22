@@ -36,14 +36,17 @@ services:
       - app-network
 
   jenkins:
-    image: jenkins/jenkins:lts
+    build: ./Pipeline
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - app-network
+    user: root
+    privileged: true  # Adicione esta linha para garantir privilégios elevados
 
 networks:
   app-network:
