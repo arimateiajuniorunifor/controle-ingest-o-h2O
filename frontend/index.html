@@ -8,32 +8,53 @@
 		<!-- Referência ao arquivo CSS -->
 	</head>
 	<body>
-		<div class="container">
+		<section class="container">
 			<div class="titulo">
 				<h1>Calculadora de Ingestão de Água</h1>
-				<hr />
 			</div>
-			<form id="agua-form" class="form-style">
-				<!-- Adição da classe form-style -->
-				<div class="input-group">
-					<label for="idade_grupo" class="label-style">Grupo Etário:</label>
-					<select id="idade_grupo" name="idade_grupo" class="input-style">
-						<!-- Adição da classe input-style -->
-						<option value="adulto">Adulto</option>
-						<option value="crianca">Criança</option>
-					</select>
-				</div>
-				<div class="input-group">
-					<label for="peso" class="label-style">Peso (kg):</label>
-					<input type="number" id="peso" name="peso" class="input-style" />
-					<!-- Adição da classe input-small -->
-				</div>
-				<button type="submit" class="button-style">Calcular</button>
-				<!-- Adição da classe button-style -->
-			</form>
+			<section class="form">
+				<form id="agua-form" class="form-style">
+					<!-- Adição da classe form-style -->
+					<div class="input-group">
+						<label for="idade_grupo" class="label-style">Grupo Etário:</label>
+						<select id="idade_grupo" name="idade_grupo" class="input-style">
+							<!-- Adição da classe input-style -->
+							<option value="adulto">Adulto</option>
+							<option value="crianca">Criança</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label for="peso" class="label-style">Peso (kg):</label>
+						<input
+							type="number"
+							id="peso"
+							name="peso"
+							class="input-style-peso" />
+						<!-- Adição da classe input-small -->
+					</div>
+					<div class="buttons">
+						<button
+							type="submit"
+							class="button-style"
+							title="Cancular informações do usuário">
+							Calcular
+						</button>
+						<!-- Adição da classe button-style -->
+						<button
+							class="button_send"
+							title="Enviar informações para o usuário">
+							<img
+								src="../frontend/assets/send.svg"
+								alt="enviar"
+								class="send" />
+						</button>
+					</div>
+				</form>
+			</section>
+
 			<p id="result" class="result-style"></p>
 			<!-- Adição da classe result-style -->
-		</div>
+		</section>
 		<script>
 			document.getElementById('agua-form').onsubmit = function (event) {
 				event.preventDefault();

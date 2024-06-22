@@ -1,17 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 body {
-	background: linear-gradient(
-		315deg,
-		rgba(4, 1, 51, 1) 0%,
-		rgba(124, 124, 228, 1) 35%,
-		rgba(193, 236, 245, 1) 100%
-	);
 	margin: 0;
 	padding: 0;
-	height: 100vh;
-	display: flex;
-	justify-content: center;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: 100vh;
+	gap: 2rem;
+	background: linear-gradient(
+		265deg,
+		rgba(255, 255, 255, 1) 0%,
+		rgba(150, 213, 237, 1) 100%
+	);
+}
+
+body::before {
+	display: block;
+	content: '';
+	background: url('../frontend/assets/agua.jpg') no-repeat center center;
+	background-size: cover;
 }
 
 .container {
@@ -43,64 +50,6 @@ h1:hover {
 	animation: GradientAnimation 2s ease infinite;
 }
 
-hr {
-	color: #3f4344;
-}
-
-form {
-	background-color: rgba(0, 0, 0, 0.5);
-	padding: 2rem;
-	border-radius: 10px;
-	width: 250px; /* Reduzindo a largura do formulário */
-	text-align: center;
-}
-
-.input-group {
-	display: flex;
-	align-items: center;
-	margin-bottom: 10px;
-}
-
-.label-style {
-	display: inline-block;
-	width: 100px;
-	text-align: right;
-	margin-right: 10px;
-}
-
-.input-style {
-	font-size: 14px; /* Reduzindo o tamanho da fonte */
-	border: 1px solid #ccc;
-	padding: 4px; /* Reduzindo o padding interno */
-	width: 100px; /* Ajustando a largura dos inputs */
-	box-sizing: border-box; /* Garante que o padding não aumente a largura total */
-}
-
-button {
-	background-color: #4caf50;
-	color: white;
-	border: none;
-	padding: 0.5rem 1rem;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 1rem;
-	cursor: pointer;
-	border-radius: 5px;
-	width: 100%;
-	margin-top: 10px;
-}
-
-button:hover {
-	background-color: #45a049;
-}
-
-#result {
-	margin-top: 1rem;
-	font-size: 1.2rem;
-	font-weight: bold;
-}
-
 @keyframes GradientAnimation {
 	0% {
 		background-position: 0% 50%;
@@ -111,4 +60,75 @@ button:hover {
 	100% {
 		background-position: 0% 50%;
 	}
+}
+
+.form {
+	background-color: #f1f0f080;
+	padding: 2rem;
+	border-radius: 32px;
+	width: 350px; /* Reduzindo a largura do formulário */
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-shadow: 10px 10px 52px 0px rgba(0, 0, 0, 0.75);
+}
+
+.input-group {
+	margin-bottom: 10px;
+}
+
+.label-style {
+	display: inline-block;
+	text-align: right;
+}
+
+.input-style {
+	font-size: 14px; /* Reduzindo o tamanho da fonte */
+	border: 1px solid #ccc;
+	padding: 4px; /* Reduzindo o padding interno */
+	width: 100px; /* Ajustando a largura dos inputs */
+	box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+.input-style-peso {
+	font-size: 14px; /* Reduzindo o tamanho da fonte */
+	border: 1px solid #ccc;
+	padding: 4px; /* Reduzindo o padding interno */
+	width: 100px; /* Ajustando a largura dos inputs */
+	box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+	margin-left: 24px;
+}
+
+.buttons {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+button {
+	background-color: #3ca8e6;
+	color: white;
+	border: none;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 1rem;
+	cursor: pointer;
+	border-radius: 12px;
+	padding: 0.5rem 2rem;
+}
+
+button:hover {
+	background-color: #9281ee;
+}
+
+.send {
+	width: 32px;
+}
+
+#result {
+	margin-top: 1rem;
+	font-size: 1.2rem;
+	font-weight: bold;
 }
