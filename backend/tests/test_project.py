@@ -1,3 +1,3 @@
 def test_home(client):
     response = client.get('/')
-    assert "Backend está no Ar!" in response.data
+    assert b"Backend online!" in response.data
