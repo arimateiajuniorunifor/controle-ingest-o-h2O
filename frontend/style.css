@@ -28,12 +28,23 @@ body {
 
 h1 {
 	font-size: 2.5rem;
-	color: #ebf4f6;
+	background: rgba(0, 0, 0, 0)
+		linear-gradient(300deg, #ffffff, #4d5b6b, #232547) repeat scroll 0% 0%/200%
+		200%;
+	color: transparent;
+	background-clip: border-box;
+	background-clip: text;
+	background-clip: text;
 	margin: 12px 0px;
 }
 
+h1:hover {
+	animation: GradientAnimation 2s ease infinite;
+	animation: GradientAnimation 2s ease infinite;
+}
+
 hr {
-	color: #ebf4f6;
+	color: #3f4344;
 }
 
 form {
@@ -88,4 +99,16 @@ button:hover {
 	margin-top: 1rem;
 	font-size: 1.2rem;
 	font-weight: bold;
+}
+
+@keyframes GradientAnimation {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
