@@ -3,9 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
-        TELEGRAM_TOKEN = credentials('telegram-token')
-        TELEGRAM_CHAT_ID = 'your-telegram-chat-id'
-        SLACK_WEBHOOK_URL = credentials('slack-webhook-url')
+        
     }
 
     stages {
