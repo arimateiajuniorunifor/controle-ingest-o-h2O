@@ -12,6 +12,22 @@ body {
 		rgba(255, 255, 255, 1) 0%,
 		rgba(150, 213, 237, 1) 100%
 	);
+	overflow: hidden; /*esconde o conteúdo da página inicialmente*/
+	opacity: 0;
+	animation: showHome 4s forwards;
+}
+
+/*animação para mostrar o conteúdo da página*/
+@keyframes showHome {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 body::before {
@@ -40,7 +56,6 @@ h1 {
 		200%;
 	color: transparent;
 	background-clip: border-box;
-	background-clip: text;
 	background-clip: text;
 	margin: 12px 0px;
 }
@@ -128,7 +143,94 @@ button:hover {
 }
 
 #result {
-	margin-top: 1rem;
+	margin-top: 2rem;
 	font-size: 1.2rem;
 	font-weight: bold;
+}
+
+/* spinner da home */
+.loader {
+	position: absolute;
+	width: 100%;
+	max-width: 6rem;
+	margin: auto;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.loader:before,
+.loader:after {
+	content: '';
+	position: absolute;
+	border-radius: 50%;
+	animation: pulsOut 1.8s ease-in-out infinite;
+	filter: drop-shadow(0 0 1rem rgba(255, 255, 255, 0.75));
+}
+.loader:before {
+	width: 100%;
+	padding-bottom: 100%;
+	box-shadow: inset 0 0 0 1rem #fff;
+	animation-name: pulsIn;
+}
+.loader:after {
+	width: calc(100% - 2rem);
+	padding-bottom: calc(100% - 2rem);
+	box-shadow: 0 0 0 0 #fff;
+}
+
+/*animação do spinner da home*/
+@keyframes pulsIn {
+	0% {
+		box-shadow: inset 0 0 0 1rem #fff;
+		opacity: 1;
+	}
+	50%,
+	100% {
+		box-shadow: inset 0 0 0 0 #fff;
+		opacity: 0;
+	}
+}
+
+@keyframes pulsOut {
+	0%,
+	50% {
+		box-shadow: 0 0 0 0 #fff;
+		opacity: 0;
+	}
+	100% {
+		box-shadow: 0 0 0 1rem #fff;
+		opacity: 1;
+	}
+}
+
+/* overlay do spinner da home*/
+.spinner_overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: #3ca8e6;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: fadeInOut 4s forwards;
+}
+
+/*animação de entrada e saída do spinner da home*/
+@keyframes fadeInOut {
+	0% {
+		opacity: 0;
+	}
+	10% {
+		opacity: 1;
+	}
+	90% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		visibility: hidden;
+	}
 }

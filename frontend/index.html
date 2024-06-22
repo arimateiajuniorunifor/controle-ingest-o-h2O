@@ -8,6 +8,9 @@
 		<!-- Referência ao arquivo CSS -->
 	</head>
 	<body>
+		<div class="spinner_overlay">
+			<div class="loader"></div>
+		</div>
 		<section class="container">
 			<div class="titulo">
 				<h1>Calculadora de Ingestão de Água</h1>
@@ -73,6 +76,7 @@
 							throw new Error('Erro ao calcular ingestão de água');
 						}
 						return response.json();
+						console.log(response);
 					})
 					.then((data) => {
 						if (data.error) {
