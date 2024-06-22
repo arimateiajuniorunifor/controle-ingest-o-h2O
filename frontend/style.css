@@ -50,6 +50,11 @@ h1:hover {
 	animation: GradientAnimation 2s ease infinite;
 }
 
+h1:hover {
+	animation: GradientAnimation 2s ease infinite;
+	animation: GradientAnimation 2s ease infinite;
+}
+
 @keyframes GradientAnimation {
 	0% {
 		background-position: 0% 50%;
@@ -131,4 +136,16 @@ button:hover {
 	margin-top: 1rem;
 	font-size: 1.2rem;
 	font-weight: bold;
+}
+
+@keyframes GradientAnimation {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
