@@ -1,20 +1,82 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
+
+    }
+
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
-                    docker.build('backend', '-f backend/Dockerfile .')
+                    // Executa o build usando docker-compose
+                    dockerComposeBuild()
                 }
             }
         }
-        stage('Deploy') {
+
+        stage('Test') {
             steps {
                 script {
-                    sh 'docker-compose down'
-                    sh 'docker-compose up -d --build'
+                    // Executa os testes no serviço controle-h2o_backend
+                    dockerComposeRun(service: 'controle-h2o_backend', command: 'sh -c "./run-tests.sh"')
+                }
+            }
+        }
+
+        stage('Build and Push Docker Images') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                script {
+                    // Faz o build e o push das imagens Docker
+                    dockerComposePush()
+                }
+            }
+        }
+
+        stage('Run Application') {
+            when {
+                expression { currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                script {
+                    // Inicia a aplicação usando docker-compose
+                    dockerComposeUp(detached: true, service: 'app_backend')
                 }
             }
         }
     }
+
+    post {
+        always {
+            script {
+                def message = currentBuild.result == 'SUCCESS' ? "Build and Tests Passed" : "Build or Tests Failed"
+                sendTelegramNotification(message)
+                sendSlackNotification(message)
+            }
+        }
+    }
+}
+
+def sendTelegramNotification(message) {
+    sh """
+    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage \
+    -d chat_id=${TELEGRAM_CHAT_ID} \
+    -d text="${message}"
+    """
+}
+
+def sendSlackNotification(message) {
+    sh """
+    curl -X POST --data-urlencode "payload={\\"text\\": \\"${message}\\"}" ${SLACK_WEBHOOK_URL}
+    """
 }

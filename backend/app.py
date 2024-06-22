@@ -28,6 +28,9 @@ def calcular():
     
     if not peso:
         return jsonify({'error': 'Peso é obrigatório'}), 400
+    
+    if peso <=0:
+        return jsonify({'error': 'Peso não pode ser negativo'}), 400
 
     if idade_grupo == 'adulto':
         total = peso * 35  # 35 ml por kg para adultos

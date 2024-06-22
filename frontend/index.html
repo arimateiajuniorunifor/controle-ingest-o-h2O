@@ -38,7 +38,7 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Erro ao calcular ingestão de água');
+                    throw new Error('Erro ao calcular, valor não pode ser negativo ou zero');
                 }
                 return response.json();
             })
@@ -51,7 +51,7 @@
             })
             .catch(error => {
                 console.error('Erro:', error);
-                document.getElementById('result').innerText = 'Erro ao calcular ingestão de água';
+                document.getElementById('result').innerText = 'Erro ao calcular, valor não pode ser negativo ou zero';
             });
         };
     </script>
