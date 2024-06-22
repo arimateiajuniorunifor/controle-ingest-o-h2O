@@ -5,7 +5,7 @@ pipeline {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
-    stages {
+    /*stages {
         stage('Prepare') {
             steps {
                 script {
@@ -19,7 +19,7 @@ pipeline {
                     sh 'git remote add origin https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O.git'
                 }
             }
-        }
+        }*/
 
         stage('Checkout') {
             steps {
