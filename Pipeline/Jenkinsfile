@@ -69,9 +69,11 @@ pipeline {
                 sh 'docker-compose up -d'
             }
         }
+    }
 
-        stage('Send Notifications') {
-            steps {
+    post {
+        success {
+            script {
                 // Enviar e-mail
                 emailext (
                     subject: "Sucesso: Job ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
@@ -79,27 +81,20 @@ pipeline {
                     to: "${env.RECIPIENTS}"
                 )
 
-                // Enviar mensagem pelo Telegram usando a credencial configurada
-                script {
-                    def telegramBotToken = credentials('telegram-bot-token')
-                    def message = "Pipeline concluído com sucesso! Job: ${env.JOB_NAME} [${env.BUILD_NUMBER}]. Detalhes: ${env.BUILD_URL}"
-                    def url = "https://api.telegram.org/bot${telegramBotToken}/sendMessage"
-                    
-                    // Usando withCredentials para passar o token de forma segura
-                    withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TOKEN')]) {
-                        sh "curl -X POST ${url} -d chat_id=${env.TELEGRAM_CHAT_ID} -d text='${message.replaceAll("'", "\\\\'")}'"
-                    }
-                }
+                // Envie mensagem pelo Telegram            
             }
         }
-    }
-
-    post {
-        success {
-            echo 'Pipeline executado com sucesso!'
-        }
         failure {
-            echo 'Pipeline falhou.'
+            script {
+                // Enviar e-mail
+                emailext (
+                    subject: "Falha: Job ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                    body: "O pipeline falhou.\nVer detalhes no Jenkins: ${env.BUILD_URL}",
+                    to: "${env.RECIPIENTS}"
+                )
+
+                // Envie mensagem pelo Telegram
+            }
         }
     }
 }
