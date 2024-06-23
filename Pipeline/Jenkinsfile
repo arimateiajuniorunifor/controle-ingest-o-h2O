@@ -3,20 +3,48 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
+        GIT_REPO_URL = 'https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O.git'
+        GIT_BRANCH = 'main'
+        GIT_CREDENTIALS_ID = '2e1d8568-5348-45ff-8336-11103c08687b'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Prepare Workspace') {
             steps {
                 script {
-                    // Inicializa o repositório Git se necessário
-                    if (!fileExists('controle-ingest-o-h2O/.git')) {
-                        sh 'mkdir -p controle-ingest-o-h2O && cd controle-ingest-o-h2O && git init'
+                    deleteDir()
+                }
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        sh """
+                        git init
+                        git remote add origin ${GIT_REPO_URL}
+                        git fetch --all
+                        git reset --hard origin/${GIT_BRANCH}
+                        """
                     }
-                    dir('controle-ingest-o-h2O') {
-                        // Check out the repository into the workspace
-                        git branch: 'main', credentialsId: '2e1d8568-5348-45ff-8336-11103c08687b', url: 'https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O.git'
-                    }
+                }
+            }
+        }
+
+        stage('Verify Clone') {
+            steps {
+                script {
+                    sh 'ls -al'
+                    sh 'pwd'
+                }
+            }
+        }
+
+        stage('Verify Docker') {
+            steps {
+                script {
+                    sh 'docker info'
                 }
             }
         }
@@ -25,7 +53,6 @@ pipeline {
             steps {
                 script {
                     dir('controle-ingest-o-h2O') {
-                        // Build Docker images using docker-compose
                         sh 'docker-compose up --build -d'
                     }
                 }
@@ -35,7 +62,6 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Assuming your test script is inside the backend container
                     sh 'docker exec controle-h2o_backend ./run-tests.sh'
                 }
             }
@@ -48,9 +74,7 @@ pipeline {
             steps {
                 script {
                     dir('controle-ingest-o-h2O') {
-                        // Build Docker images
                         sh 'docker-compose build'
-                        // Log in to Docker Hub and push images
                         sh """
                         docker login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW}
                         docker-compose push
@@ -67,7 +91,6 @@ pipeline {
             steps {
                 script {
                     dir('controle-ingest-o-h2O') {
-                        // Start the application using docker-compose
                         sh 'docker-compose up -d app_backend'
                     }
                 }
