@@ -1,71 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom right, #0F2027, #2C5364);
-    color: white;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: 100vh;
+	gap: 2rem;
+	background: linear-gradient(
+		265deg,
+		rgba(255, 255, 255, 1) 0%,
+		rgba(150, 213, 237, 1) 100%
+	);
+	overflow: hidden; /*esconde o conteúdo da página inicialmente*/
+	opacity: 0;
+	animation: showHome 4s forwards;
+}
+
+/*animação para mostrar o conteúdo da página*/
+@keyframes showHome {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+body::before {
+	display: block;
+	content: '';
+	background: url('./assets/agua.jpg') no-repeat center center;
+	background-size: cover;
+}
+
+.container {
+	font-family: 'Poppins';
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.titulo {
+	margin-bottom: 2rem;
 }
 
 h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+	font-size: 2.5rem;
+	background: rgba(0, 0, 0, 0)
+		linear-gradient(300deg, #ffffff, #4d5b6b, #232547) repeat scroll 0% 0%/200%
+		200%;
+	color: transparent;
+	background-clip: border-box;
+	background-clip: text;
+	margin: 12px 0px;
 }
 
-form {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 2rem;
-    border-radius: 10px;
-    width: 250px; /* Reduzindo a largura do formulário */
-    text-align: center;
+h1:hover {
+	animation: GradientAnimation 2s ease infinite;
+	animation: GradientAnimation 2s ease infinite;
+}
+
+@keyframes GradientAnimation {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.form {
+	background-color: #f1f0f080;
+	padding: 2rem;
+	border-radius: 32px;
+	width: 350px; /* Reduzindo a largura do formulário */
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-shadow: 10px 10px 52px 0px rgba(0, 0, 0, 0.75);
 }
 
 .input-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 .label-style {
-    display: inline-block;
-    width: 100px;
-    text-align: right;
-    margin-right: 10px;
+	display: inline-block;
+	text-align: right;
 }
 
 .input-style {
-    font-size: 14px; /* Reduzindo o tamanho da fonte */
-    border: 1px solid #ccc;
-    padding: 4px; /* Reduzindo o padding interno */
-    width: 100px; /* Ajustando a largura dos inputs */
-    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+	font-size: 14px; /* Reduzindo o tamanho da fonte */
+	border: 1px solid #ccc;
+	padding: 4px; /* Reduzindo o padding interno */
+	width: 100px; /* Ajustando a largura dos inputs */
+	box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+.input-style-peso {
+	font-size: 14px; /* Reduzindo o tamanho da fonte */
+	border: 1px solid #ccc;
+	padding: 4px; /* Reduzindo o padding interno */
+	width: 100px; /* Ajustando a largura dos inputs */
+	box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+	margin-left: 24px;
+}
+
+.buttons {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-    width: 100%;
-    margin-top: 10px;
+	background-color: #3ca8e6;
+	border: 2px solid #422800;
+	border-radius: 30px;
+	box-shadow: #422800 4px 4px 0 0;
+	color: #422800;
+	cursor: pointer;
+	display: inline-block;
+	color: white;
+	font-weight: 600;
+	font-size: 18px;
+	padding: 0 18px;
+	line-height: 50px;
+	text-align: center;
+	text-decoration: none;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
 }
 
 button:hover {
-    background-color: #45a049;
+	background-color: #9281ee;
+}
+
+button:active {
+	box-shadow: #422800 2px 2px 0 0;
+	transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+	button {
+		min-width: 120px;
+		padding: 0 25px;
+	}
+}
+
+.button_send {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.send {
+	width: 32px;
 }
 
 #result {
-    margin-top: 1rem;
-    font-size: 1.2rem;
-    font-weight: bold;
+	margin-top: 2rem;
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
+/* spinner da home */
+.loader {
+	position: absolute;
+	width: 100%;
+	max-width: 6rem;
+	margin: auto;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.loader:before,
+.loader:after {
+	content: '';
+	position: absolute;
+	border-radius: 50%;
+	animation: pulsOut 1.8s ease-in-out infinite;
+	filter: drop-shadow(0 0 1rem rgba(255, 255, 255, 0.75));
+}
+.loader:before {
+	width: 100%;
+	padding-bottom: 100%;
+	box-shadow: inset 0 0 0 1rem #fff;
+	animation-name: pulsIn;
+}
+.loader:after {
+	width: calc(100% - 2rem);
+	padding-bottom: calc(100% - 2rem);
+	box-shadow: 0 0 0 0 #fff;
+}
+
+/*animação do spinner da home*/
+@keyframes pulsIn {
+	0% {
+		box-shadow: inset 0 0 0 1rem #fff;
+		opacity: 1;
+	}
+	50%,
+	100% {
+		box-shadow: inset 0 0 0 0 #fff;
+		opacity: 0;
+	}
+}
+
+@keyframes pulsOut {
+	0%,
+	50% {
+		box-shadow: 0 0 0 0 #fff;
+		opacity: 0;
+	}
+	100% {
+		box-shadow: 0 0 0 1rem #fff;
+		opacity: 1;
+	}
+}
+
+/* overlay do spinner da home*/
+.spinner_overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: #3ca8e6;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: fadeInOut 4s forwards;
+}
+
+/*animação de entrada e saída do spinner da home*/
+@keyframes fadeInOut {
+	0% {
+		opacity: 0;
+	}
+	10% {
+		opacity: 1;
+	}
+	90% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		visibility: hidden;
+	}
 }

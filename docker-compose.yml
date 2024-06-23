@@ -35,21 +35,22 @@ services:
     networks:
       - app-network
 
-  jenkins:
-    build: ./Pipeline
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - app-network
-    user: root
-    privileged: true  # Adicione esta linha para garantir privilégios elevados
+  # Não mais necessário, subir aplicação separado na AWS
+  #jenkins:
+  #  build: ./Pipeline
+  #  ports:
+  #    - "8080:8080"
+  #    - "50000:50000"
+  #  volumes:
+  #    - jenkins_home:/var/jenkins_home
+  #    - /var/run/docker.sock:/var/run/docker.sock
+  #  networks:
+  #    - app-network
+  #  user: root
+  #  privileged: true  # Adicione esta linha para garantir privilégios elevados
 
 networks:
   app-network:
 
-volumes:
-  jenkins_home:
+#volumes:
+#  jenkins_home:

@@ -2,81 +2,92 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
+        DOCKERHUB_CREDENTIALS = credentials('token-dockerhub') // ID das credenciais do Docker Hub no Jenkins
+        GITHUB_CREDENTIALS = credentials('github-token') // ID das credenciais do GitHub no Jenkins
+        REPO = 'arimateiajuniorunifor/controle-ingest-o-h2O' // Nome do seu repositório no GitHub, sem a URL completa
+        DOCKERHUB_REPO = 'arimateiajunior/controle-h2o' // Nome do seu repositório no Docker Hub
+        TAG = "backend-v${env.BUILD_NUMBER}" // Tag baseada no número do build do Jenkins
+        VENV_PATH = '/var/lib/jenkins/workspace/Pipeline - H2O/backend/h2o'
+        PROJECT_PATH = '/var/lib/jenkins/workspace/Pipeline - H2O/backend'
+        RECIPIENTS = 'arimateiajunior.tic@gmail.com' // Adicione aqui os e-mails dos destinatários
+        TELEGRAM_CHAT_ID = '820863867' // ID do chat ou canal do Telegram onde deseja enviar a mensagem
     }
 
-    /*stages {
-        stage('Prepare') {
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', credentialsId: env.GITHUB_CREDENTIALS, url: "https://github.com/${env.REPO}.git"
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Verify Docker Images') {
+            steps {
+                sh 'docker images'
+            }
+        }
+
+        stage('Tag and Push to Docker Hub') {
             steps {
                 script {
-                    // Remove existing .git directory if present
-                    sh 'rm -rf .git'
+                    def service = 'pipeline-h2o_backend'
+                    def imageName = "${service}:latest"
+                    def dockerHubTag = "${env.DOCKERHUB_REPO}:${env.TAG}"
                     
-                    // Initialize Git repository
-                    sh 'git init'
+                    // Verificar se a imagem existe antes de tentar taguear
+                    sh "docker inspect --type=image ${imageName} || exit 1"
                     
-                    // Set Git remote URL for origin
-                    sh 'git remote add origin https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O.git'
-                }
-            }
-        }*/
-
-        stage('Checkout') {
-            steps {
-                // Fetch the repository into the workspace
-                git branch: 'main', credentialsId: '2e1d8568-5348-45ff-8336-11103c08687b', url: 'https://github.com/arimateiajuniorunifor/controle-ingest-o-h2O.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                script {
-                    // Move to the repository directory
-                    dir('controle-ingest-o-h2O') {
-                        // Build Docker images using docker-compose
-                        sh 'docker-compose up --build -d'
-                    }
+                    // Login no Docker Hub
+                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
+                    
+                    sh "docker tag ${imageName} ${dockerHubTag}"
+                    sh "docker push ${dockerHubTag}"
                 }
             }
         }
 
-        stage('Test') {
+        stage('Test Backend') {
             steps {
+                // Executar comandos no subshell para ativar o ambiente virtual e executar os testes
                 script {
-                    // Assuming your test script is inside the backend container
-                    sh 'docker exec controle-h2o_backend ./run-tests.sh'
+                    sh """
+                    . '${VENV_PATH}/bin/activate'
+                    pip install -r '${PROJECT_PATH}/requirements.txt'
+                    pytest '${PROJECT_PATH}/tests'
+                    """
                 }
             }
         }
 
-        stage('Build and Push Docker Images') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
+        stage('Deploy to Production') {
             steps {
-                script {
-                    dir('controle-ingest-o-h2O') {
-                        // Build Docker images
-                        sh 'docker-compose build'
-                        // Log in to Docker Hub and push images
-                        sh """
-                        docker login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW}
-                        docker-compose push
-                        """
-                    }
-                }
+                sh 'docker-compose up -d'
             }
         }
 
-        stage('Run Application') {
-            when {
-                expression { currentBuild.result == 'SUCCESS' }
-            }
+        stage('Send Notifications') {
             steps {
+                // Enviar e-mail
+                emailext (
+                    subject: "Sucesso: Job ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                    body: "O pipeline foi executado com sucesso.\nVer detalhes no Jenkins: ${env.BUILD_URL}",
+                    to: "${env.RECIPIENTS}"
+                )
+
+                // Enviar mensagem pelo Telegram usando a credencial configurada
                 script {
-                    dir('controle-ingest-o-h2O') {
-                        // Start the application using docker-compose
-                        sh 'docker-compose up -d app_backend'
+                    def telegramBotToken = credentials('telegram-bot-token')
+                    def message = "Pipeline concluído com sucesso! Job: ${env.JOB_NAME} [${env.BUILD_NUMBER}]. Detalhes: ${env.BUILD_URL}"
+                    def url = "https://api.telegram.org/bot${telegramBotToken}/sendMessage"
+                    
+                    // Usando withCredentials para passar o token de forma segura
+                    withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'TOKEN')]) {
+                        sh "curl -X POST ${url} -d chat_id=${env.TELEGRAM_CHAT_ID} -d text='${message.replaceAll("'", "\\\\'")}'"
                     }
                 }
             }
@@ -84,26 +95,11 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                def message = currentBuild.result == 'SUCCESS' ? "Build and Tests Passed" : "Build or Tests Failed"
-                sendTelegramNotification(message)
-                sendSlackNotification(message)
-            }
+        success {
+            echo 'Pipeline executado com sucesso!'
+        }
+        failure {
+            echo 'Pipeline falhou.'
         }
     }
-}
-
-def sendTelegramNotification(message) {
-    sh """
-    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage \
-    -d chat_id=${TELEGRAM_CHAT_ID} \
-    -d text="${message}"
-    """
-}
-
-def sendSlackNotification(message) {
-    sh """
-    curl -X POST --data-urlencode "payload={\\"text\\": \\"${message}\\"}" ${SLACK_WEBHOOK_URL}
-    """
 }

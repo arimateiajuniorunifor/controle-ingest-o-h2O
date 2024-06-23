@@ -1,59 +1,97 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Ingestão de Água</title>
-    <link rel="stylesheet" href="style.css"> <!-- Referência ao arquivo CSS -->
-</head>
-<body>
-    <h1>Calculadora de Ingestão de Água</h1>
-    <form id="agua-form" class="form-style"> <!-- Adição da classe form-style -->
-        <div class="input-group">
-            <label for="idade_grupo" class="label-style">Grupo Etário:</label>
-            <select id="idade_grupo" name="idade_grupo" class="input-style"> <!-- Adição da classe input-style -->
-                <option value="adulto">Adulto</option>
-                <option value="crianca">Criança</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label for="peso" class="label-style">Peso (kg):</label>
-            <input type="number" id="peso" name="peso" class="input-style"> <!-- Adição da classe input-small -->
-        </div>
-        <button type="submit" class="button-style">Calcular</button> <!-- Adição da classe button-style -->
-    </form>
-    <p id="result" class="result-style"></p> <!-- Adição da classe result-style -->
-    <script>
-        document.getElementById('agua-form').onsubmit = function(event) {
-            event.preventDefault();
-            const idadeGrupo = document.getElementById('idade_grupo').value;
-            const peso = parseFloat(document.getElementById('peso').value); // Convertendo para número
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Calculadora de Ingestão de Água</title>
+		<link rel="stylesheet" href="style.css" />
+		<!-- Referência ao arquivo CSS -->
+	</head>
+	<body>
+		<div class="spinner_overlay">
+			<div class="loader"></div>
+		</div>
+		<section class="container">
+			<div class="titulo">
+				<h1>Calculadora de Ingestão de Água</h1>
+			</div>
+			<section class="form">
+				<form id="agua-form" class="form-style">
+					<!-- Adição da classe form-style -->
+					<div class="input-group">
+						<label for="idade_grupo" class="label-style">Grupo Etário:</label>
+						<select id="idade_grupo" name="idade_grupo" class="input-style">
+							<!-- Adição da classe input-style -->
+							<option value="adulto">Adulto</option>
+							<option value="crianca">Criança</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label for="peso" class="label-style">Peso (kg):</label>
+						<input
+							type="number"
+							id="peso"
+							name="peso"
+							class="input-style-peso" />
+						<!-- Adição da classe input-small -->
+					</div>
+					<div class="buttons">
+						<button
+							type="submit"
+							class="button-style"
+							title="Cancular informações do usuário">
+							Calcular
+						</button>
+						<!-- Adição da classe button-style -->
+						<button
+							class="button_send"
+							title="Enviar informações para o usuário">
+							<img
+								src="./assets/send.svg"
+								alt="enviar"
+								class="send" />
+						</button>
+					</div>
+				</form>
+			</section>
+			<p id="result" class="result-style"></p>
+			<!-- Adição da classe result-style -->
+		</section>
 
-            fetch('http://localhost:5000/calcular', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ idade_grupo: idadeGrupo, peso: peso }),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao calcular, valor não pode ser negativo ou zero');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('result').innerText = data.error;
-                } else {
-                    document.getElementById('result').innerText = 'Ingestão diária de água: ' + data.total + ' ml';
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                document.getElementById('result').innerText = 'Erro ao calcular, valor não pode ser negativo ou zero';
-            });
-        };
-    </script>
-</body>
+		<script>
+			document.getElementById('agua-form').onsubmit = function (event) {
+				event.preventDefault();
+				const idadeGrupo = document.getElementById('idade_grupo').value;
+				const peso = parseFloat(document.getElementById('peso').value); // Convertendo para número
+
+				fetch('http://18.228.236.114:5000/calcular', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ idade_grupo: idadeGrupo, peso: peso }),
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Erro ao calcular ingestão de água');
+						}
+						return response.json();
+						console.log(response);
+					})
+					.then((data) => {
+						if (data.error) {
+							document.getElementById('result').innerText = data.error;
+						} else {
+							document.getElementById('result').innerText =
+								'Ingestão diária de água: ' + data.total + ' ml';
+						}
+					})
+					.catch((error) => {
+						console.error('Erro:', error);
+						document.getElementById('result').innerText =
+							'Erro ao calcular ingestão de água';
+					});
+			};
+		</script>
+	</body>
 </html>
