@@ -11,9 +11,7 @@ services:
   frontend:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VERSION: ${VERSION}      
+      dockerfile: Dockerfile    
     volumes:
       - ./frontend:/usr/share/nginx/html
     ports:
