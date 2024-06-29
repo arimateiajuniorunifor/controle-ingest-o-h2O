@@ -25,16 +25,18 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            environment {
+                SCANNER_OPTS = '-Xmx1024m'
+            }
             steps {
-                script {
-                    withSonarQubeEnv('SonarQube') { // Configurado no Jenkins Global Tool Configuration
-                        sh "sonar-scanner \
-                            -Dsonar.projectKey=${env.SONARQUBE_PROJECT_KEY} \
-                            -Dsonar.projectName='${env.SONARQUBE_PROJECT_NAME}' \
-                            -Dsonar.sources=${env.PROJECT_PATH} \
-                            -Dsonar.host.url=${env.SONARQUBE_URL} \
-                            -Dsonar.login=${SONARQUBE_CREDENTIALS}"
-                    }
+                withSonarQubeEnv('SONAR_CONTROLE-H2O') { // Nome da configuração do SonarQube no Jenkins
+                    sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=DeployBackend \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=${SONARQUBE_URL} \
+                        -Dsonar.login=${SONARQUBE_CREDENTIALS_USR} \
+                        -Dsonar.python.version=3.8 \
+                        -Dsonar.python.coverage.reportPaths=coverage.xml"
                 }
             }
         }
