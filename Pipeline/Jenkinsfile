@@ -24,6 +24,21 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube') { // Configurado no Jenkins Global Tool Configuration
+                        sh "sonar-scanner \
+                            -Dsonar.projectKey=${env.SONARQUBE_PROJECT_KEY} \
+                            -Dsonar.projectName='${env.SONARQUBE_PROJECT_NAME}' \
+                            -Dsonar.sources=${env.PROJECT_PATH} \
+                            -Dsonar.host.url=${env.SONARQUBE_URL} \
+                            -Dsonar.login=${SONARQUBE_CREDENTIALS}"
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 sh 'docker-compose build'
