@@ -36,6 +36,9 @@ services:
       - app-network
   
   sonarqube:
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: sonar
     image: sonarqube:latest
     ports:
