@@ -9,7 +9,7 @@ services:
       - app-network
 
   frontend:
-    build: ./frontend
+    image: nginx:alpine
     volumes:
       - ./frontend:/usr/share/nginx/html
     ports:
