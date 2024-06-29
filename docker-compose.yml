@@ -34,6 +34,43 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
       - app-network
+  
+  sonarqube:
+    container_name: sonar
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    networks:
+      - app-network
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://pg-sonar:5432/sonar
+    depends_on:
+      - pg-sonar
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+
+  pg-sonar:
+    container_name: pg-sonar
+    image: postgres:9.6
+    networks:
+      - app-network
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
 
 networks:
   app-network:
+
+volumes:
+    sonarqube_conf:
+    sonarqube_data:
+    sonarqube_extensions:
+    sonarqube_bundled-plugins:
+    postgresql:
+    postgresql_data:
