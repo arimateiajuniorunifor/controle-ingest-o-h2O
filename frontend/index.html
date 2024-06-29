@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculadora de Ingestão de Água</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="version.js"></script>
 </head>
 <body>
     <div class="spinner_overlay">
@@ -14,7 +13,7 @@
     <section class="container">
         <div class="titulo">
             <h1>Calculadora de Ingestão de Água</h1>
-            <p>Versão: <span v1.0.0></span></p>
+            <p>Versão: <span class="versao">v1.0.0</span></p>
         </div>
         <section class="form">
             <form id="agua-form" class="form-style">
@@ -85,10 +84,5 @@
         </section>
     </section>
     <script src="./script.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("app-version").innerText = window.APP_VERSION;
-        });
-    </script>
 </body>
 </html>

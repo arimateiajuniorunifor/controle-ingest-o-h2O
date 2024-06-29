@@ -258,6 +258,11 @@ button:active {
 	animation: fadeInOut 4s forwards;
 }
 
+.versao {
+	font-family: 'Poppins';
+	font-weight: bold;
+}
+
 /*animação de entrada e saída do spinner da home*/
 @keyframes fadeInOut {
 	0% {
