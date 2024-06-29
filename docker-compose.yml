@@ -9,9 +9,7 @@ services:
       - app-network
 
   frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile    
+    build: ./frontend
     volumes:
       - ./frontend:/usr/share/nginx/html
     ports:
@@ -39,11 +37,3 @@ services:
 
 networks:
   app-network:
-
-volumes:
-    sonarqube_conf:
-    sonarqube_data:
-    sonarqube_extensions:
-    sonarqube_bundled-plugins:
-    postgresql:
-    postgresql_data:
