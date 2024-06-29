@@ -11,12 +11,13 @@ services:
   frontend:
     build: 
       context: ./frontend
+      dockerfile: Dockerfile
       args:
         VERSION: ${VERSION}      
     volumes:
       - ./frontend:/usr/share/nginx/html
     ports:
-      - "8085:8085"
+      - "8085:80"
     networks:
       - app-network
 
