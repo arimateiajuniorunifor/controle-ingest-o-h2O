@@ -11,6 +11,10 @@ pipeline {
         PROJECT_PATH = '/var/lib/jenkins/workspace/Pipeline - H2O/backend'
         RECIPIENTS = 'arimateiajunior.tic@gmail.com' // Adicione aqui os e-mails dos destinatários
         SLACK_CHANNEL = '#projeto-controleh2o' // Canal ou usuário do Slack para enviar a mensagem
+        SONARQUBE_URL = 'http://18.228.236.114:9000' // URL do seu servidor SonarQube
+        SONARQUBE_CREDENTIALS = credentials('TokenSonar') // ID das credenciais do SonarQube no Jenkins
+        SONARQUBE_PROJECT_KEY = 'DeployControleH2O' // Substitua pela chave do seu projeto no SonarQube
+        SONARQUBE_PROJECT_NAME = 'DeployControleH2O' // Nome do projeto no SonarQube
     }
 
     stages {
