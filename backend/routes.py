@@ -28,25 +28,29 @@ def metrics():
 @main.route('/calcular', methods=['POST'])
 def calcular():
     start_time = time.time()
-    data = request.json
-    idade_grupo = data.get('idade_grupo')
-    peso = data.get('peso', 0)
-    
-    if not peso:
-        return jsonify({'error': 'Peso é obrigatório'}), 400
-    elif peso < 0:
-        return jsonify({'error': 'Peso deve ser maior que 0'}), 400
+    in_progress_requests.labels('/calcular').inc()
+    try:
+        data = request.json
+        idade_grupo = data.get('idade_grupo')
+        peso = data.get('peso', 0)
+        
+        if not peso:
+            return jsonify({'error': 'Peso é obrigatório'}), 400
+        elif peso < 0:
+            return jsonify({'error': 'Peso deve ser maior que 0'}), 400
 
-    if idade_grupo == 'adulto':
-        total = peso * 35  # 35 ml por kg para adultos
-    elif idade_grupo == 'crianca':
-        total = peso * 50  # 50 ml por kg para crianças
-    else:
-        return jsonify({'error': 'Grupo de Idade Inválido'}), 400
+        if idade_grupo == 'adulto':
+            total = peso * 35  # 35 ml por kg para adultos
+        elif idade_grupo == 'crianca':
+            total = peso * 50  # 50 ml por kg para crianças
+        else:
+            return jsonify({'error': 'Grupo de Idade Inválido'}), 400
 
-    response = jsonify({'total': total})
-    request_latency.labels('/calcular').observe(time.time() - start_time)
-    return response
+        response = jsonify({'total': total})
+        request_latency.labels('/calcular').observe(time.time() - start_time)
+        return response
+    finally:
+        in_progress_requests.labels('/calcular').dec()
 
 # Adicionando middleware para medir requisições em andamento
 @main.before_request
@@ -57,3 +61,8 @@ def before_request():
 def after_request(response):
     in_progress_requests.labels(request.path).dec()
     return response
+
+@main.teardown_request
+def teardown_request(exception):
+    in_progress_requests.labels(request.path).dec()
+    return None
