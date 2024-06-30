@@ -27,6 +27,7 @@ def metrics():
 
 @main.route('/calcular', methods=['POST'])
 def calcular():
+    start_time = time.time()
     data = request.json
     idade_grupo = data.get('idade_grupo')
     peso = data.get('peso', 0)
@@ -43,7 +44,9 @@ def calcular():
     else:
         return jsonify({'error': 'Grupo de Idade Inválido'}), 400
 
-    return jsonify({'total': total})
+    response = jsonify({'total': total})
+    request_latency.labels('/calcular').observe(time.time() - start_time)
+    return response
 
 # Adicionando middleware para medir requisições em andamento
 @main.before_request
