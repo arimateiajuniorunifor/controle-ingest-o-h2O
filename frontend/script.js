@@ -17,7 +17,7 @@ document.getElementById('agua-form').onsubmit = function (event) {
 	result.innerHTML = ''; // Limpa resultados anteriores
 	const startTime = Date.now(); // Registra o tempo de início da requisição
 
-	fetch('http://18.228.236.114:5000/calcular', {
+	fetch('http://localhost:5000/calcular', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
