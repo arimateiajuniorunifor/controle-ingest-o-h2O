@@ -53,6 +53,7 @@ def calcular():
 
         response = jsonify({'total': total})
         request_latency.labels('/calcular').observe(time.time() - start_time)
+        logging.debug(f"Observation in /calcular: {time.time() - start_time}")
         return response
     finally:
         in_progress_requests.labels('/calcular').dec()
