@@ -5,3 +5,4 @@ FROM nginx:alpine
 COPY . /usr/share/nginx/html
 
 # Nenhuma modificação adicional necessária, nginx já é iniciado automaticamente
+EXPOSE 80

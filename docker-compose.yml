@@ -18,6 +18,8 @@ services:
       - "8005:80"
     networks:
       - app-network
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
 
   prometheus:
     build:
