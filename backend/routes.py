@@ -1,7 +1,10 @@
+import os
 from flask import Blueprint, request, jsonify
 from prometheus_client import Counter, generate_latest, REGISTRY, Histogram, Gauge
 import time
 import logging
+import psycopg2
+from psycopg2 import sql
 
 main = Blueprint("main", __name__)
 
@@ -16,6 +19,35 @@ request_latency = Histogram('request_latency_seconds', 'Latência das requisiç�
 
 # Exemplo de métrica de gauge para saturação (número de requisições em andamento)
 in_progress_requests = Gauge('in_progress_requests', 'Número de requisições em andamento', ['endpoint'])
+
+# Configurações do banco de dados
+DB_CONFIG = {
+    'dbname': os.getenv('DB_NAME', 'agua_intake'),
+    'user': os.getenv('DB_USER', 'admin'),
+    'password': os.getenv('DB_PASSWORD', 'admin123'),
+    'host': os.getenv('DB_HOST', 'postgres'),  # Alterado para 'postgres' conforme o Docker Compose
+    'port': os.getenv('DB_PORT', '5432')
+}
+
+def get_db_connection():
+    try:
+        conn = psycopg2.connect(**DB_CONFIG)
+        logging.debug("Conexão com o banco de dados estabelecida com sucesso.")
+        return conn
+    except Exception as e:
+        logging.error(f"Erro ao conectar com o banco de dados: {e}")
+        raise
+
+def test_db_connection():
+    try:
+        conn = get_db_connection()
+        conn.close()
+        logging.info("Conexão com o banco de dados testada com sucesso.")
+    except Exception as e:
+        logging.error(f"Erro ao testar a conexão com o banco de dados: {e}")
+
+# Chame test_db_connection() no início do seu script para verificar a conexão
+test_db_connection()
 
 @main.route('/', methods=['GET'])
 def home():
@@ -39,7 +71,7 @@ def calcular():
         idade_grupo = data.get('idade_grupo')
         peso = data.get('peso', 0)
         
-        if not peso:
+        if peso is None:
             return jsonify({'error': 'Peso é obrigatório'}), 400
         elif peso < 0:
             return jsonify({'error': 'Peso deve ser maior que 0'}), 400
@@ -49,14 +81,30 @@ def calcular():
         elif idade_grupo == 'crianca':
             total = peso * 50  # 50 ml por kg para crianças
         elif idade_grupo == 'gravida':
-            total = peso * 35 + 0.3 # 35 ml por kg para grávidas, mais 300 ml
+            total = peso * 35 + 300  # 35 ml por kg para grávidas, mais 300 ml
         else:
             return jsonify({'error': 'Grupo de Idade Inválido'}), 400
+
+        # Inserir dados no banco de dados
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        insert_query = sql.SQL("""
+            INSERT INTO consultas (idade_grupo, peso, total)
+            VALUES (%s, %s, %s)
+        """)
+        cursor.execute(insert_query, (idade_grupo, peso, total))
+        conn.commit()
+        logging.debug("Dados inseridos com sucesso!")
+        cursor.close()
+        conn.close()
 
         response = jsonify({'total': total})
         request_latency.labels('/calcular').observe(time.time() - start_time)
         logging.debug(f"Observation in /calcular: {time.time() - start_time}")
         return response
+    except Exception as e:
+        logging.error(f"Erro ao processar a requisição: {e}")
+        return jsonify({'error': 'Erro ao processar a requisição'}), 500
     finally:
         in_progress_requests.labels('/calcular').dec()
         logging.debug(f"Decrement in /calcular: {in_progress_requests.labels('/calcular')._value.get()}")
