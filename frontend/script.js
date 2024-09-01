@@ -3,8 +3,14 @@ document.getElementById('agua-form').onsubmit = function (event) {
 	const idadeGrupo = document.getElementById('idade_grupo').value;
 	const peso = parseFloat(document.getElementById('peso').value); // Convertendo para número
 	const spinner = document.getElementById('spinner');
-	const result = document.getElementById('result');
+	const result = document.getElementById('result').value;
 	const send = document.getElementById('button_send');
+	const username = document.getElementById('username').value;
+
+	// Texto do overlay
+	document.getElementById(
+		'userDisplay',
+	).innerText = `Olá ${username}, a quantidade de água que você precisa tomar por dia é de: ${result} litros por dia`;
 
 	// Validações adicionais no frontend
 	if (isNaN(peso) || peso <= 0) {
@@ -13,7 +19,7 @@ document.getElementById('agua-form').onsubmit = function (event) {
 	}
 
 	spinner.classList.add('show'); // Mostra o spinner
-	send.classList.remove('active'); // Esconde o botão de enviar
+	send.classList.add('active'); // botão de enviar
 	result.innerHTML = ''; // Limpa resultados anteriores
 	const startTime = Date.now(); // Registra o tempo de início da requisição
 
@@ -37,7 +43,7 @@ document.getElementById('agua-form').onsubmit = function (event) {
 			// Define um atraso para garantir que o spinner fique visível por pelo menos 2 segundos
 			setTimeout(() => {
 				spinner.classList.remove('show'); // Esconde o spinner
-				send.classList.remove('active'); // Mostra o botão de enviar
+				send.classList.add('active'); // Mostra o botão de enviar
 				if (data.error) {
 					result.innerText = data.error;
 				} else {
@@ -64,24 +70,23 @@ document.getElementById('agua-form').onsubmit = function (event) {
 
 const send = document.getElementById('button_send');
 const overlay = document.getElementById('overlay');
-const close = document.getElementById('close-btn');
+const closeButton = document.getElementById('close-btn');
 const form = document.getElementById('overlay-form');
 
 send.onclick = function () {
 	overlay.style.display = 'flex';
 };
 
-close.onclick = function () {
+closeButton.onclick = function () {
 	clearOverlayInputs();
 	overlay.style.display = 'none';
 };
 
 form.onsubmit = function (event) {
 	event.preventDefault();
-	const nome = document.getElementById('nome').value;
 	const email = document.getElementById('email').value;
 
-	if (!nome || !email) {
+	if (!email) {
 		alert('Por favor, preencha todos os campos.');
 		return;
 	}
@@ -95,15 +100,4 @@ form.onsubmit = function (event) {
 function clearOverlayInputs() {
 	document.getElementById('nome').value = '';
 	document.getElementById('email').value = '';
-}
-
-//Esta função recebe o objeto data retornado pela requisição fetch
-function showResultInOverlay(data) {
-	const overlayResult = document.getElementById('overlay-result');
-	if (data.error) {
-		overlayResult.innerText = data.error;
-	} else {
-		overlayResult.innerText =
-			'Você precisa consumir ' + data.total + 'ml de água por dia';
-	}
 }

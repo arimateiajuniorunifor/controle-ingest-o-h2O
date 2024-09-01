@@ -106,7 +106,8 @@ h1:hover {
 }
 
 .input-style,
-.input-style-peso {
+.input-style-peso,
+.input-style-name {
 	font-size: 14px; /* Reduzindo o tamanho da fonte */
 	border: 1px solid #ccc;
 	padding: 4px; /* Reduzindo o padding interno */
@@ -117,6 +118,10 @@ h1:hover {
 
 .input-style-peso {
 	margin-left: 24px;
+}
+
+.input-style-name {
+	margin-left: 52px;
 }
 
 .buttons {
